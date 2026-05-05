@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GHOST // OPERATOR FILE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:#050608; --dark:#0a0c10; --dark2:#0f1218; --dark3:#161b24;
+      --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.12);
+      --text:#c8cdd8; --text2:#5a6478; --text3:#363d4d;
+      --red:#d13639; --red2:#ff4447; --gold:#c89b3c; --gold2:#f0c060;
+      --green:#1fa86e;
+      --mono:'Share Tech Mono',monospace;
+      --display:'Bebas Neue',sans-serif;
+      --cond:'Barlow Condensed',sans-serif;
+      --body:'Barlow',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--black);color:var(--text);font-family:var(--body);overflow-x:hidden;cursor:crosshair;}
+    body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;z-index:9999;}
+
+    /* NAV */
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:48px;background:rgba(5,6,8,0.94);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);}
+    .topbar-left{font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:.1em;}
+    .topbar-left span{color:var(--red);}
+    .topbar-nav{display:flex;}
+    .topbar-nav a{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--text2);text-decoration:none;padding:0 16px;height:48px;display:flex;align-items:center;border-left:1px solid var(--border);transition:color .2s,background .2s;text-transform:uppercase;}
+    .topbar-nav a:hover{color:var(--red);background:rgba(209,54,57,.06);}
+    .topbar-right{font-family:var(--mono);font-size:10px;color:var(--text2);display:flex;align-items:center;gap:8px;}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+    /* CONFIG BAR */
+    .config-bar{background:rgba(200,155,60,.07);border-bottom:1px solid rgba(200,155,60,.2);padding:10px 3rem;font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.1em;margin-top:48px;}
+    .config-bar code{background:rgba(200,155,60,.12);padding:1px 6px;border-radius:2px;}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 4rem;position:relative;border-bottom:1px solid var(--border);}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(209,54,57,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(209,54,57,.03) 1px,transparent 1px);background-size:60px 60px;z-index:0;}
+    .hero-bg{position:absolute;inset:0;background:linear-gradient(to right,rgba(5,6,8,.98) 40%,rgba(5,6,8,.6)),linear-gradient(to top,rgba(5,6,8,1) 0%,transparent 60%);z-index:1;}
+    .hero-frame{position:absolute;top:80px;right:3rem;width:260px;height:360px;border:1px solid rgba(209,54,57,.18);z-index:2;}
+    .hero-frame::before{content:'';position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:1px solid rgba(209,54,57,.07);}
+    .hero-frame-label{position:absolute;top:-1px;left:16px;font-family:var(--mono);font-size:9px;color:var(--red);background:var(--black);padding:0 6px;letter-spacing:.15em;}
+    .hero-frame-ghost{position:absolute;inset:20px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:110px;color:rgba(209,54,57,.06);letter-spacing:-.05em;}
+    .hero-content{position:relative;z-index:3;max-width:640px;}
+    .hero-tag{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.2em;margin-bottom:1rem;display:flex;align-items:center;gap:10px;}
+    .hero-tag::before{content:'';display:inline-block;width:24px;height:1px;background:var(--red);}
+    .hero-name{font-family:var(--display);font-size:clamp(5rem,12vw,9rem);line-height:.9;color:#fff;letter-spacing:.02em;margin-bottom:.5rem;}
+    .hero-name span{color:var(--red);}
+    .hero-sub{font-family:var(--cond);font-size:15px;font-weight:300;color:var(--text2);letter-spacing:.25em;text-transform:uppercase;margin-bottom:2rem;}
+    .hero-stats{display:flex;border:1px solid var(--border2);width:fit-content;}
+    .hero-stat{padding:12px 22px;border-right:1px solid var(--border2);text-align:center;}
+    .hero-stat:last-child{border-right:none;}
+    .hero-stat-val{font-family:var(--display);font-size:1.8rem;color:#fff;line-height:1;}
+    .hero-stat-val.red{color:var(--red);}
+    .hero-stat-val.gold{color:var(--gold);}
+    .hero-stat-label{font-family:var(--mono);font-size:9px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase;margin-top:4px;}
+
+    /* SECTIONS */
+    .section{padding:5rem 3rem;border-bottom:1px solid var(--border);}
+    .sec-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:3rem;}
+    .sec-tag{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.2em;}
+    .sec-title{font-family:var(--display);font-size:clamp(2.5rem,5vw,4rem);color:#fff;letter-spacing:.05em;line-height:1;}
+    .sec-line{flex:1;height:1px;background:var(--border2);margin-left:1rem;}
+
+    /* RANK GRID */
+    .rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+    .rank-cell{background:var(--dark);padding:2rem;position:relative;}
+    .rank-cell-label{font-family:var(--mono);font-size:9px;color:var(--text2);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.5rem;}
+    .rank-cell-val{font-family:var(--display);font-size:3rem;color:#fff;line-height:1;}
+    .rank-cell-val.gold{color:var(--gold2);}
+    .rank-cell-val.red{color:var(--red2);}
+    .rank-cell-val.green{color:var(--green);}
+    .rank-cell-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:4px;}
+    .rank-corner{position:absolute;bottom:8px;right:8px;width:12px;height:12px;border-bottom:1px solid var(--border2);border-right:1px solid var(--border2);}
+
+    /* MATCHES */
+    .match-header{display:grid;grid-template-columns:4px 100px 90px 100px 90px 90px 60px 50px;gap:12px;align-items:center;padding:0 1rem .75rem;border-bottom:1px solid var(--border2);font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;}
+    .match-row{display:grid;grid-template-columns:4px 100px 90px 100px 90px 90px 60px 50px;gap:12px;align-items:center;padding:1rem;border-bottom:1px solid var(--border);transition:background .15s;cursor:default;}
+    .match-row:hover{background:rgba(255,255,255,.02);}
+    .match-row:last-child{border-bottom:none;}
+    .res-bar{height:40px;width:4px;border-radius:2px;}
+    .win{background:var(--green);box-shadow:0 0 8px rgba(31,168,110,.4);}
+    .loss{background:var(--red);box-shadow:0 0 8px rgba(209,54,57,.4);}
+    .match-result{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;}
+    .match-result.win{color:var(--green);}
+    .match-result.loss{color:var(--red);}
+    .match-score{font-family:var(--mono);font-size:12px;color:var(--text);}
+    .match-agent{font-family:var(--cond);font-size:14px;font-weight:600;color:#fff;}
+    .match-map{font-family:var(--cond);font-size:13px;color:var(--text2);}
+    .match-kda{font-family:var(--mono);font-size:12px;color:var(--text);}
+    .match-acs{font-family:var(--display);font-size:1.2rem;color:var(--gold);}
+    .match-dur{font-family:var(--mono);font-size:10px;color:var(--text2);}
+
+    /* AGENTS */
+    .agent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);}
+    .agent-card{background:var(--dark);padding:1.5rem;position:relative;overflow:hidden;transition:background .2s;}
+    .agent-card:hover{background:var(--dark2);}
+    .agent-card::before{content:attr(data-agent);position:absolute;bottom:-10px;right:-5px;font-family:var(--display);font-size:5rem;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
+    .agent-name{font-family:var(--display);font-size:1.6rem;color:#fff;margin-bottom:4px;}
+    .agent-role{font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:.15em;margin-bottom:1rem;}
+    .agent-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+    .agent-k{font-family:var(--mono);font-size:10px;color:var(--text2);}
+    .agent-v{font-family:var(--mono);font-size:10px;color:var(--text);}
+
+    /* STATES */
+    .state-load{padding:3rem;text-align:center;font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:.15em;}
+    .state-load::after{content:'';animation:ldots 1.2s infinite;}
+    @keyframes ldots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+    .state-err{padding:1.5rem 2rem;font-family:var(--mono);font-size:11px;color:var(--red);letter-spacing:.08em;background:rgba(209,54,57,.05);border-top:1px solid rgba(209,54,57,.15);}
+
+    /* FADE IN */
+    .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+    .fade-in.visible{opacity:1;transform:translateY(0);}
+
+    footer{padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:.15em;}
+    footer span{color:var(--red);}
+
+    @media(max-width:768px){
+      .hero{padding:0 1.25rem 3rem;}
+      .section{padding:3rem 1.25rem;}
+      .hero-frame,.topbar-nav{display:none;}
+      .match-header{display:none;}
+      .match-row{grid-template-columns:4px 1fr 1fr 1fr;}
+      .match-row>*:nth-child(n+6){display:none;}
+      footer{flex-direction:column;gap:8px;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-left"><span>◈</span> TF-141 // OPERATOR PROFILE</div>
+  <div class="topbar-nav">
+    <a href="#rank">RANK</a>
+    <a href="#matches">MATCHES</a>
+    <a href="#agents">AGENTS</a>
+  </div>
+  <div class="topbar-right">
+    <div class="live-dot"></div>
+    <span id="liveLabel">SYNCING…</span>
+  </div>
+</nav>
+
+<div class="config-bar" id="configBar">
+  ⚠ CLASSIFIED // SET <code>RIOT_API_KEY</code> &amp; <code>RIOT_PUUID</code> IN VERCEL ENV VARS TO LOAD LIVE INTEL
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-frame">
+    <div class="hero-frame-label">OPERATOR // VISUAL ID</div>
+    <div class="hero-frame-ghost">G</div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">◢ CLASSIFIED // OPERATOR FILE</div>
+    <div class="hero-name" id="heroName">GHOST<span>.</span></div>
+    <div class="hero-sub" id="heroSub">Valorant Operator // Loading Intel…</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val red" id="hRank">—</div><div class="hero-stat-label">Rank</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hWR">—</div><div class="hero-stat-label">Win Rate</div></div>
+      <div class="hero-stat"><div class="hero-stat-val gold" id="hKDA">—</div><div class="hero-stat-label">Avg KDA</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hHS">—</div><div class="hero-stat-label">HS %</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RANK -->
+<section class="section fade-in" id="rank">
+  <div class="sec-head">
+    <div class="sec-tag">◢ INTEL_01</div>
+    <div class="sec-title">RANK PROFILE</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="rank-grid" id="rankGrid">
+    <div class="rank-cell" style="grid-column:1/-1"><div class="state-load">DECRYPTING RANK DATA</div></div>
+  </div>
+</section>
+
+<!-- MATCHES -->
+<section class="section fade-in" id="matches">
+  <div class="sec-head">
+    <div class="sec-tag">◢ INTEL_02</div>
+    <div class="sec-title">COMBAT LOG</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="match-header">
+    <div></div><div>Result</div><div>Score</div><div>Agent</div><div>Map</div><div>K / D / A</div><div>ACS</div><div>Time</div>
+  </div>
+  <div id="matchLog"><div class="state-load">DECRYPTING MATCH DATA</div></div>
+</section>
+
+<!-- AGENTS -->
+<section class="section fade-in" id="agents">
+  <div class="sec-head">
+    <div class="sec-tag">◢ INTEL_03</div>
+    <div class="sec-title">AGENT POOL</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="agent-grid" id="agentGrid">
+    <div class="rank-cell"><div class="state-load">LOADING</div></div>
+  </div>
+</section>
+
+<footer>
+  <div>TF-141 // PROPERTY OF HER MAJESTY'S GOVT // CLEARANCE TS/SCI</div>
+  <div>POWERED BY <span>RIOT GAMES API</span> // AUTO-REFRESH 60s</div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+/* scroll reveal */
+const obs = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+const CONFIGURED = CONFIG.RIOT_API_KEY && CONFIG.RIOT_PUUID;
+document.getElementById('heroName').textContent = (CONFIG.DISPLAY_NAME||'GHOST')+'.';
+
+if(CONFIGURED){
+  document.getElementById('configBar').style.display='none';
+  document.getElementById('liveLabel').textContent='LIVE';
+  loadRiot();
+  setInterval(loadRiot,60000);
+} else {
+  document.getElementById('heroSub').textContent='DEMO MODE // Configure Vercel env vars for live intel';
+  document.getElementById('liveLabel').textContent='DEMO';
+  loadDemo();
+}
+
+async function loadRiot(){
+  try{
+    const [rR,mR]=await Promise.all([fetch('/api/riot-rank'),fetch('/api/riot-matches')]);
+    const rank=await rR.json(), matches=await mR.json();
+    if(rank.tier) renderRank(rank);
+    if(matches.length){ renderMatches(matches); renderAgents(matches); renderHero(rank,matches); }
+    document.getElementById('liveLabel').textContent='LIVE // '+new Date().toLocaleTimeString();
+  }catch(e){
+    document.getElementById('matchLog').innerHTML=`<div class="state-err">⚠ COMMS FAILURE: ${e.message}</div>`;
+  }
+}
+
+function renderRank(r){
+  const wr=Math.round((r.wins/(r.wins+r.losses))*100);
+  document.getElementById('rankGrid').innerHTML=`
+    <div class="rank-cell"><div class="rank-cell-label">◢ TIER CLASSIFICATION</div><div class="rank-cell-val gold">${r.tier} ${r.rank}</div><div class="rank-cell-sub">${r.leaguePoints} LP</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ COMBAT RECORD</div><div class="rank-cell-val green">${wr}%</div><div class="rank-cell-sub">${r.wins}W / ${r.losses}L</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ TOTAL MISSIONS</div><div class="rank-cell-val">${r.wins+r.losses}</div><div class="rank-cell-sub">Ranked matches</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ QUEUE TYPE</div><div class="rank-cell-val red" style="font-size:1.6rem">RANKED</div><div class="rank-cell-sub">Solo / Duo</div><div class="rank-corner"></div></div>`;
+}
+
+function renderMatches(matches){
+  document.getElementById('matchLog').innerHTML=matches.slice(0,10).map(m=>`
+    <div class="match-row">
+      <div class="res-bar ${m.won?'win':'loss'}"></div>
+      <div class="match-result ${m.won?'win':'loss'}">${m.won?'▲ VICTORY':'▼ DEFEAT'}</div>
+      <div class="match-score">${m.score||'—'}</div>
+      <div class="match-agent">${m.agent||'—'}</div>
+      <div class="match-map">${m.map||'—'}</div>
+      <div class="match-kda">${m.kills}/${m.deaths}/${m.assists}</div>
+      <div class="match-acs">${m.acs||'—'}</div>
+      <div class="match-dur">${m.duration||'—'}</div>
+    </div>`).join('');
+}
+
+function renderAgents(matches){
+  const roles={OMEN:'CONTROLLER',VIPER:'CONTROLLER',BRIMSTONE:'CONTROLLER',ASTRA:'CONTROLLER',CLOVE:'CONTROLLER',JETT:'DUELIST',REYNA:'DUELIST',NEON:'DUELIST',PHOENIX:'DUELIST',RAZE:'DUELIST',YORU:'DUELIST',ISO:'DUELIST',SAGE:'SENTINEL',KILLJOY:'SENTINEL',CYPHER:'SENTINEL',CHAMBER:'SENTINEL',DEADLOCK:'SENTINEL',VYSE:'SENTINEL',SOVA:'INITIATOR',BREACH:'INITIATOR',SKYE:'INITIATOR',FADE:'INITIATOR',GEKKO:'INITIATOR'};
+  const map={};
+  matches.forEach(m=>{
+    if(!m.agent)return;
+    if(!map[m.agent])map[m.agent]={wins:0,games:0,kills:0,deaths:0,acs:[]};
+    const a=map[m.agent];
+    a.games++;if(m.won)a.wins++;
+    a.kills+=m.kills;a.deaths+=m.deaths||1;
+    if(m.acs)a.acs.push(m.acs);
+  });
+  const sorted=Object.entries(map).sort((a,b)=>b[1].games-a[1].games).slice(0,6);
+  document.getElementById('agentGrid').innerHTML=sorted.map(([name,s])=>{
+    const wr=Math.round((s.wins/s.games)*100);
+    const kd=(s.kills/s.deaths).toFixed(2);
+    const avg=s.acs.length?Math.round(s.acs.reduce((a,b)=>a+b,0)/s.acs.length):'—';
+    return`<div class="agent-card" data-agent="${name}">
+      <div class="agent-name">${name}</div>
+      <div class="agent-role">${roles[name.toUpperCase()]||'AGENT'}</div>
+      <div class="agent-row"><span class="agent-k">GAMES</span><span class="agent-v">${s.games}</span></div>
+      <div class="agent-row"><span class="agent-k">WIN %</span><span class="agent-v">${wr}%</span></div>
+      <div class="agent-row"><span class="agent-k">K/D</span><span class="agent-v">${kd}</span></div>
+      <div class="agent-row"><span class="agent-k">AVG ACS</span><span class="agent-v">${avg}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderHero(rank,matches){
+  if(rank.tier){
+    document.getElementById('hRank').textContent=`${rank.tier} ${rank.rank}`;
+    document.getElementById('hWR').textContent=Math.round((rank.wins/(rank.wins+rank.losses))*100)+'%';
+    document.getElementById('heroSub').textContent=`VALORANT OPERATOR // ${rank.tier} ${rank.rank} // ${rank.leaguePoints} LP`;
+  }
+  const kdas=matches.map(m=>m.kda).filter(Boolean);
+  if(kdas.length) document.getElementById('hKDA').textContent=(kdas.reduce((a,b)=>a+b,0)/kdas.length).toFixed(2);
+  const hss=matches.map(m=>m.headshots).filter(Boolean);
+  if(hss.length) document.getElementById('hHS').textContent=Math.round(hss.reduce((a,b)=>a+b,0)/hss.length)+'%';
+}
+
+function loadDemo(){
+  document.getElementById('heroSub').textContent='VALORANT OPERATOR // DIAMOND II // 64 LP';
+  document.getElementById('hRank').textContent='DIAMOND II';
+  document.getElementById('hWR').textContent='63%';
+  document.getElementById('hKDA').textContent='2.84';
+  document.getElementById('hHS').textContent='31%';
+  document.getElementById('rankGrid').innerHTML=`
+    <div class="rank-cell"><div class="rank-cell-label">◢ TIER CLASSIFICATION</div><div class="rank-cell-val gold">DIAMOND II</div><div class="rank-cell-sub">64 LP</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ COMBAT RECORD</div><div class="rank-cell-val green">63%</div><div class="rank-cell-sub">187W / 110L</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ TOTAL MISSIONS</div><div class="rank-cell-val">297</div><div class="rank-cell-sub">Ranked matches</div><div class="rank-corner"></div></div>
+    <div class="rank-cell"><div class="rank-cell-label">◢ QUEUE TYPE</div><div class="rank-cell-val red" style="font-size:1.6rem">RANKED</div><div class="rank-cell-sub">Solo / Duo</div><div class="rank-corner"></div></div>`;
+  const demo=[
+    {won:true,score:'13:7',agent:'Omen',map:'Ascent',kills:32,deaths:11,assists:6,kda:3.45,acs:348,headshots:38,duration:'32m'},
+    {won:true,score:'13:10',agent:'Reyna',map:'Haven',kills:30,deaths:14,assists:3,kda:2.36,acs:287,headshots:44,duration:'28m'},
+    {won:false,score:'11:13',agent:'Sage',map:'Bind',kills:12,deaths:18,assists:9,kda:1.17,acs:181,headshots:22,duration:'35m'},
+    {won:true,score:'13:4',agent:'Cypher',map:'Haven',kills:27,deaths:8,assists:12,kda:4.88,acs:376,headshots:29,duration:'22m'},
+    {won:true,score:'13:11',agent:'Omen',map:'Sunset',kills:22,deaths:16,assists:8,kda:1.88,acs:268,headshots:33,duration:'31m'},
+    {won:false,score:'9:13',agent:'Jett',map:'Split',kills:17,deaths:19,assists:4,kda:1.11,acs:215,headshots:35,duration:'38m'},
+    {won:true,score:'13:9',agent:'Omen',map:'Haven',kills:29,deaths:13,assists:7,kda:2.77,acs:321,headshots:41,duration:'29m'},
+    {won:true,score:'13:6',agent:'Chamber',map:'Pearl',kills:25,deaths:9,assists:5,kda:3.33,acs:334,headshots:27,duration:'26m'},
+    {won:false,score:'12:14',agent:'Viper',map:'Breeze',kills:21,deaths:20,assists:6,kda:1.35,acs:252,headshots:31,duration:'40m'},
+    {won:true,score:'13:8',agent:'Omen',map:'Lotus',kills:26,deaths:12,assists:9,kda:2.92,acs:298,headshots:36,duration:'31m'},
+  ];
+  renderMatches(demo);renderAgents(demo);
+}
+</script>
+</body>
+</html>
